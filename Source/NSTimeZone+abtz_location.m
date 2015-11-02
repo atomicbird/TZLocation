@@ -42,7 +42,12 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
         // zone.tab is available locally if you prefer, but "backward" (used below) is not.
         //NSURL *zonetabURL = [NSURL fileURLWithPath:@"/usr/share/zoneinfo/zone.tab"];
         NSURL *zonetabURL = [[NSBundle mainBundle] URLForResource:@"zone" withExtension:@"tab"];
-        
+
+        // Bugfix for using cocoapods with framework
+        if (!zonetabURL) {
+            zonetabURL = [[NSBundle bundleWithIdentifier:@"org.cocoapods.TZLocation"] URLForResource:@"zone" withExtension:@"tab"];
+        }
+
         NSError *error = nil;
         NSString *zonetabContents = [NSString stringWithContentsOfURL:zonetabURL encoding:NSUTF8StringEncoding error:&error];
         
@@ -59,6 +64,12 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
         if (matchingLine == nil) {
             // Oh damn, self is using an older zone name. Get the backward compatibility file.
             NSURL *backwardURL = [[NSBundle mainBundle] URLForResource:@"backward" withExtension:nil];
+
+            // Bugfix for using cocoapods with framework
+            if (!backwardURL) {
+                backwardURL = [[NSBundle bundleWithIdentifier:@"org.cocoapods.TZLocation"] URLForResource:@"backward" withExtension:nil];
+            }
+
             NSError *error = nil;
             NSString *backwardContents = [NSString stringWithContentsOfURL:backwardURL encoding:NSUTF8StringEncoding error:&error];
             __block NSString *backwardLine = nil;
