@@ -37,8 +37,6 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
 {
     CLLocation *location = objc_getAssociatedObject(self, locationAssociatedObjectKey);
     if (location == nil) {
-        NSLog(@"Getting location for %@", self);
-
         // zone.tab is available locally if you prefer, but "backward" (used below) is not.
         //NSURL *zonetabURL = [NSURL fileURLWithPath:@"/usr/share/zoneinfo/zone.tab"];
         NSURL *zonetabURL = [[NSBundle mainBundle] URLForResource:@"zone" withExtension:@"tab"];
@@ -50,7 +48,7 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
 
         NSError *error = nil;
         NSString *zonetabContents = [NSString stringWithContentsOfURL:zonetabURL encoding:NSUTF8StringEncoding error:&error];
-        
+
         // Find the line that contains self's timezone name
         __block NSString *matchingLine = nil;
         __block NSString *tzName = [self name];
@@ -60,7 +58,7 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
                 *stop = YES;
             }
         }];
-        
+
         if (matchingLine == nil) {
             // Oh damn, self is using an older zone name. Get the backward compatibility file.
             NSURL *backwardURL = [[NSBundle mainBundle] URLForResource:@"backward" withExtension:nil];
@@ -104,7 +102,7 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
                 locationString = matchingLineElements[1];
             }
         }
-        
+
         if (countryCodeString != nil) {
             objc_setAssociatedObject(self, countryCodeAssociatedObjectKey, countryCodeString, OBJC_ASSOCIATION_RETAIN);
         }
@@ -162,7 +160,7 @@ const char *countryCodeAssociatedObjectKey = "abtz_countryCode";
             degrees += [[latLongString substringWithRange:NSMakeRange(6, 2)] doubleValue] / 3600.0;
             break;
         }
-            
+
         default:
             break;
     }
